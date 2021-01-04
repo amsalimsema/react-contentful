@@ -1,25 +1,64 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from 'react';
+import * as contentful from 'contentful';
+import { BLOCKS, INLINES, MARKS } from '@contentful/rich-text-types';
+import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
 
+const client = contentful.createClient({
+  space: 'wlgvz2z255oc',
+  accessToken: 'N3J5eWjefb63k3up9FRDr8fcjZzT7wUBzab9SabZXl8',
+});
+
+const options = {
+  renderNode: {
+    [BLOCKS.PARAGRAPH]: (node, children) => <p>{children}</p>,
+    [INLINES.HYPERLINK]: (node, children) => (
+      <a href={node.data.url}>{children}</a>
+    ),
+    [BLOCKS.EMBEDDED_ASSET]: (node) => (
+      <img
+        src={node.data.target.fields.file.url}
+        alt={node.data.target.fields.title}
+      />
+    ),
+  },
+  renderMark: {
+    [MARKS.ITALIC]: (text) => <span className='italic'>{text}</span>,
+  },
+};
+
+const created = (timestamp) =>
+  new Date(timestamp).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+  const [entries, setEntries] = useState([]);
+  useEffect(() => {
+    client
+      .getEntries({
+        content_type: 'blogPost',
+      })
+      .then((response) => {
+        setEntries(response.items);
+      });
+  }, []);
+
+  const Entries = entries.map((entry) => (
+    <div className='container' key={entry.sys.id}>
+      <h1>{entry.fields.title}</h1>
+      <div>
+        <img
+          src={entry.fields.author.fields.avatar.fields.file.url}
+          alt={entry.fields.author.fields.avatar.fields.title}
+        />
+      </div>
+      {entry.fields.author.fields.name}
+      {created(entry.sys.createdAt)}
+      {documentToReactComponents(entry.fields.content, options)}
     </div>
-  );
+  ));
+  return <div className='App'>{Entries}</div>;
 }
 
 export default App;
