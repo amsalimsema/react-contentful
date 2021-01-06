@@ -4,8 +4,8 @@ import { BLOCKS, INLINES, MARKS } from '@contentful/rich-text-types';
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
 
 const client = contentful.createClient({
-  space: 'wlgvz2z255oc',
-  accessToken: 'N3J5eWjefb63k3up9FRDr8fcjZzT7wUBzab9SabZXl8',
+  space: process.env.REACT_APP_API_SPACE,
+  accessToken: process.env.REACT_APP_ACCESS_TOKEN,
 });
 
 const options = {
