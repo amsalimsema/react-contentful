@@ -8,11 +8,12 @@ const client = contentful.createClient({
   accessToken: process.env.REACT_APP_ACCESS_TOKEN,
 });
 
+//const website_url = '';
 const options = {
   renderNode: {
     [BLOCKS.PARAGRAPH]: (node, children) => <p>{children}</p>,
     [INLINES.HYPERLINK]: (node, children) => (
-      <a href={node.data.url}>{children}</a>
+      <a href={node.data.uri}>{children}</a>
     ),
     [BLOCKS.EMBEDDED_ASSET]: (node) => (
       <img
@@ -20,6 +21,22 @@ const options = {
         alt={node.data.target.fields.title}
       />
     ),
+
+    /* [INLINES.HYPERLINK]: (node) => {
+      return (
+        <a
+          href={node.data.uri}
+          target={`${
+            node.data.uri.startsWith(website_url) ? '_self' : '_blank'
+          }`}
+          rel={`${
+            node.data.uri.startsWith(website_url) ? '' : 'noopener noreferrer'
+          }`}
+        >
+          {node.content[0].value}
+        </a>
+      );
+    }, */
   },
   renderMark: {
     [MARKS.ITALIC]: (text) => <span className='italic'>{text}</span>,
@@ -52,10 +69,18 @@ function App() {
           src={entry.fields.author.fields.avatar.fields.file.url}
           alt={entry.fields.author.fields.avatar.fields.title}
         />
+      </div>{' '}
+      <div>
+        <img
+          src={entry.fields.author.fields.avatar.fields.file.url}
+          alt={entry.fields.author.fields.avatar.fields.title}
+        />
       </div>
       {entry.fields.author.fields.name}
       {created(entry.sys.createdAt)}
-      {documentToReactComponents(entry.fields.content, options)}
+      <div class='px-5 pt-5'>
+        {documentToReactComponents(entry.fields.content, options)}
+      </div>
     </div>
   ));
   return <div className='App'>{Entries}</div>;
