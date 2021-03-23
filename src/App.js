@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import * as contentful from 'contentful';
 import { BLOCKS, INLINES, MARKS } from '@contentful/rich-text-types';
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
+import { Col, Row } from 'react-bootstrap';
 
 const client = contentful.createClient({
   space: process.env.REACT_APP_API_SPACE,
@@ -62,28 +63,32 @@ function App() {
   }, []);
 
   const Entries = entries.map((entry) => (
-    <div className='container' key={entry.sys.id}>
-      <h1>{entry.fields.title}</h1>
-      <div>
-        <img
-          src={entry.fields.author.fields.avatar.fields.file.url}
-          alt={entry.fields.author.fields.avatar.fields.title}
-        />
-      </div>{' '}
-      <div>
-        <img
-          src={entry.fields.author.fields.avatar.fields.file.url}
-          alt={entry.fields.author.fields.avatar.fields.title}
-        />
-      </div>
-      {entry.fields.author.fields.name}
-      {created(entry.sys.createdAt)}
-      <div class='px-5 pt-5'>
-        {documentToReactComponents(entry.fields.content, options)}
-      </div>
+    <div key={entry.sys.id} className='container'>
+      <h1 className='text-center'>{entry.fields.title}</h1>
+      <Row>
+        <Col md={12}>
+          <div>
+            <img
+              src={entry.fields.author.fields.avatar.fields.file.url}
+              alt={entry.fields.author.fields.avatar.fields.title}
+            />
+            {entry.fields.author.fields.name}
+            {created(entry.sys.createdAt)}
+          </div>
+        </Col>
+      </Row>
+
+      <Row>
+        <Col md={12}>
+          {documentToReactComponents(entry.fields.content, options)}
+        </Col>
+        {/* <Col md={6}>
+          {documentToReactComponents(entry.fields.content, options)}
+        </Col> */}
+      </Row>
     </div>
   ));
-  return <div className='App'>{Entries}</div>;
+  return <div>{Entries}</div>;
 }
 
 export default App;
