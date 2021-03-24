@@ -64,22 +64,32 @@ function App() {
 
   const Entries = entries.map((entry) => (
     <div key={entry.sys.id} className='container'>
-      <h1 className='text-center'>{entry.fields.title}</h1>
+      <h1 className='text-start'>{entry.fields.title}</h1>
       <Row>
         <Col md={12}>
-          <div>
+          <div style={{ display: 'flex', alignItems: 'safe center' }}>
             <img
               src={entry.fields.author.fields.avatar.fields.file.url}
               alt={entry.fields.author.fields.avatar.fields.title}
+              style={{
+                borderRadius: '15rem',
+                width: '70px',
+                padding: '0.5rem',
+              }}
             />
-            {entry.fields.author.fields.name}
-            {created(entry.sys.createdAt)}
+            <section className='mt-3'>
+              <p>
+                {entry.fields.author.fields.name}
+                <br />
+                {created(entry.sys.createdAt)}
+              </p>
+            </section>
           </div>
         </Col>
       </Row>
 
       <Row>
-        <Col md={12}>
+        <Col md={12} style={{ lineHeight: '1.1rem' }}>
           {documentToReactComponents(entry.fields.content, options)}
         </Col>
         {/* <Col md={6}>
