@@ -3,6 +3,7 @@ import * as contentful from 'contentful';
 import { BLOCKS, INLINES, MARKS } from '@contentful/rich-text-types';
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
 import { Col, Row } from 'react-bootstrap';
+//import ReactPaginate from 'react-paginate';
 
 const client = contentful.createClient({
   space: process.env.REACT_APP_API_SPACE,
@@ -50,16 +51,26 @@ const created = (timestamp) =>
     month: 'long',
     day: 'numeric',
   });
+// pagination
+//const ENTRIES_PER_PAGE = 3;
 function App() {
   const [entries, setEntries] = useState([]);
+  // PAGINATION PAGE COUNT
+  // const [pageCount, setPageCount] = useState(0);
+  // const [page, setPage] = useState(0);
   useEffect(() => {
     client
       .getEntries({
         content_type: 'blogPost',
+        order: '-sys.createdAt',
+        limit: 5,
       })
       .then((response) => {
         setEntries(response.items);
+        // setPageCount(Math.ceil(response.total / ENTRIES_PER_PAGE));
       });
+    window.scrollTo(0, 0);
+    //  }, [page]);
   }, []);
 
   const Entries = entries.map((entry) => (
@@ -98,7 +109,22 @@ function App() {
       </Row>
     </div>
   ));
-  return <div>{Entries}</div>;
+  return (
+    <div>
+      {Entries}
+      {/* {pageCount > 1 && (
+        <ReactPaginate
+          breakLabel={'...'}
+          pageCount={pageCount}
+          marginPagesDisplayed={2}
+          pageRangeDisplayed={5}
+          onChange={({ selected }) => setPage(selected)}
+          containerClassName={'pagination'}
+          activeClassName={'active'}
+        />
+      )} */}
+    </div>
+  );
 }
 
 export default App;
