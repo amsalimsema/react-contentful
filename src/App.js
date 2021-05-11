@@ -21,6 +21,7 @@ const options = {
       <img
         src={node.data.target.fields.file.url}
         alt={node.data.target.fields.title}
+        className="w-100'
       />
     ),
 
